@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block wrapper %}
+{% block content %}
+<div class="main d-flex justify-content-center w-100">
+    <main class="content d-flex p-0">
+        <div class="container d-flex flex-column">
+            <div class="row h-100">
+                <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+                    <div class="d-table-cell align-middle">
+                        <div class="text-center">
+                            <img id="loginPageLogo" src="{{url_for('static', filename='images/logo.png')}}" />
+                            <p class="lead">
+                                Sign in to your account to continue
+                            </p>
+                        </div>
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="m-sm-4">
+                                    <div class="text-center">
+                                        {% with messages = get_flashed_messages(with_categories=true) %}
+                                        {% if messages %}
+                                        {% for category, message in messages %}{{ message }}{% endfor %}
+                                        {% endif %}
+                                        {% endwith %}
+                                    </div>
+                                    <form method="POST">
+                                        {{ form.csrf_token }}
+                                        <div class="mb-3">
+                                            <label class="form-label">Username</label>
+                                            <input id="username" class="form-control form-control-lg" type="text"
+                                                name="{{ form.username.name }}" placeholder="Enter your username"
+                                                required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="form-label">Password</label>
+                                            <input id="password" class="form-control form-control-lg" type="password"
+                                                name="{{ form.password.name }}" placeholder="Enter your password"
+                                                required />
+                                        </div>
+                                        <!--
+                                        <div>
+                                            <div class="form-check align-items-center">
+                                                <input id="customControlInline" type="checkbox" class="form-check-input"
+                                                    value="remember-me" name="{{ form.remember_me.name }}" checked>
+                                                <label class="form-check-label text-small"
+                                                    for="customControlInline">Remember me next time</label>
+                                            </div>
+                                        </div> -->
+                                        <div class="text-center mt-3">
+                                            <!-- <a href="dashboard-default.html" class="btn btn-lg btn-primary">Sign in</a> -->
+                                            <button type="submit" class="btn btn-lg btn-primary">Sign in</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+{% endblock %}
+{% endblock %}

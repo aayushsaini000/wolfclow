@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block wrapper %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-md-6 offset-md-2">
+            <h3>An unexpected error has occurred</h3>
+            <p>The administrator has been notified. Sorry for the inconvenience!'</p>
+            <a href="{{ url_for('main.index') }}" type="button" class="btn btn-primary">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% endblock %}

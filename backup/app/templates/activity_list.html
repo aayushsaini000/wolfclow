@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+   <!-- Page Heading -->
+   <!-- Content Row -->
+   <!-- Page Heading -->
+   <!-- DataTales Example -->
+   <div class="card shadow mb-4">
+      <div class="card-body">
+         <div class="table-responsive">
+            <table class="table table-hover" id="ActivityTable" width="100%" cellspacing="0">
+               <thead>
+                  <tr>
+                     <th>id</th>
+                     <th>timestamp</th>
+                     <th>activity</th>
+                     <th>user</th>
+                  </tr>
+               </thead>
+               <tbody>
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- /.container-fluid -->
+{% endblock %}
+{% block page_js %}
+<script type="text/JavaScript" src="{{url_for('static', filename='js/flask_ajax_setup.js')}}"></script>
+<script type="text/javascript">
+   $(document).ready(function() {
+       /* Ajax to load datatable source*/
+       var activityTable = $('#ActivityTable').DataTable( {
+           "ajax": {
+               type: 'GET',
+               url: "{{ url_for('activity.ajax_activity_list') }}",
+               "dataSrc": function ( json ) {
+                   return json.data
+               }
+           }
+       });
+       
+       /* realods the table after avery five seconds */
+       setInterval( function () {
+           activityTable.ajax.reload();
+       }, 50000 );
+   
+   })
+</script>
+{% endblock %}

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid p-0">
+    <!--<h1 class="h3 mb-3">Host Table</h1>-->
+    <div class="row">
+        <div class="col-12 col-sm-6 col-xxl d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2" id="computername"></h3>
+                            <p class="mb-2">Computer Name</p>
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <i class="align-middle text-success" data-feather="monitor"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xxl d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2" id="localip"></h3>
+                            <p class="mb-2">Local IP</p>
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <i class="align-middle text-danger" data-feather="hash"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xxl d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2" id="uptime"></h3>
+                            <p class="mb-2">Uptime</p>
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <i class="align-middle text-info" data-feather="zap"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <h3 class="mb-2">Host features</h3>
+        <br/>
+        <div class="col-12 col-lg-12">
+            <div class="tab">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item"><a class="nav-link active" href="#screenshots" data-bs-toggle="tab" role="tab" aria-selected="false">Screenshots</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#open-connections" data-bs-toggle="tab" role="tab" aria-selected="false">Open Connections</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#processes" data-bs-toggle="tab" role="tab" aria-selected="false">Processes</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#systeminfo" data-bs-toggle="tab" role="tab" aria-selected="false">Systeminfo</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#arp" data-bs-toggle="tab" role="tab" aria-selected="false">ARP</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#domain" data-bs-toggle="tab" role="tab" aria-selected="false">Domain Info</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane" id="screenshots" role="tabpanel">
+                    </div>
+                    <div class="tab-pane" id="open-connections" role="tabpanel">
+                        <div class="form-group">
+                            <textarea rows="50" class="form-control" id="open-connection-text" readonly="">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="processes" role="tabpanel">
+                        <div class="form-group">
+                            <textarea rows="50" class="form-control" id="processes-text" readonly="">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="systeminfo" role="tabpanel">
+                        <div class="form-group">
+                            <textarea rows="50" class="form-control" id="system-info-text" readonly="">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="arp" role="tabpanel">
+                        <div class="form-group">
+                            <textarea rows="50" class="form-control" id="arp-info" readonly="">
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="domain" role="tabpanel">
+                        <div class="form-group">
+                            <textarea rows="50" class="form-control" id="domain-text" readonly="">
+                            </textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block page_js %}
+<script type="text/JavaScript" src="{{url_for('static', filename='js/flask_ajax_setup.js')}}"></script>
+<script type="text/javascript">
+   $(document).ready(function() {
+        $.getJSON("{{url_for('host.ajax_host_page', pk=pk)}}", function(data) {
+            $.each(data, function(index) {
+                console.log(atob(data[index][0][5]));
+                $('#computername').text(data[index][0][0]);
+                $('#localip').text(data[index][0][1]);
+                $('#open-connection-text').text(atob(data[index][0][2]));
+                $('#processes-text').text(atob(data[index][0][3]));
+                $('#system-info-text').text(atob(data[index][0][4]));
+                $('#arp-info').text(atob(data[index][0][5]));
+                $('#domain-text').text(atob(data[index][0][6]));
+            });
+        });
+        })
+</script>
+{% endblock %}

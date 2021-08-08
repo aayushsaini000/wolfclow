@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="container-fluid p-0">
+        <!--<h1 class="h3 mb-3">Host Table</h1>-->
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <table class="table table-striped" id="TaskTable" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>task_id</th>
+                                    <th>Computername</th>
+                                    <th>guid</th>
+                                    <th>timestamp</th>
+                                    <th>task-type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.container-fluid -->
+<!-- Delete modal -->
+<form id="formDeleteTask" method="POST" action="">
+    {{ form.csrf_token }}
+    <div class="modal fade" id="deleteTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- View Command output modal -->
+<div class="modal fade" id="CommandOutputModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Executed Command Output</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="message-text" class="col-form-label">Command:</label>
+                    <textarea class="form-control" id="commandText" rows="3" readonly></textarea>
+                </div>
+                <br>
+                <div class="form-group" id="output">
+                    <label for="message-text" class="col-form-label">Output:</label>
+                    <!--<textarea class="form-control" id="commandOutput" rows="10" readonly></textarea>-->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block page_js %}
+<script>$("#getdata").on("click", function () {
+        console.log($(this).text());
+    });
+</script>
+<script type="text/JavaScript" src="{{url_for('static', filename='js/flask_ajax_setup.js')}}"></script>
+<script type="text/JavaScript" src="{{url_for('static', filename='js/featherlight.js')}}"></script>
+<script type="text/JavaScript" src="{{url_for('static', filename='js/sweetalert2.all.min.js')}}"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        /* Ajax to load datatable source*/
+        var tasktable = $('#TaskTable').DataTable({
+            "ajax": {
+                type: 'GET',
+                url: "{{ url_for('task.ajax_task_list') }}",
+                "dataSrc": function (json) {
+                    return json.data
+                }
+            },
+            "columnDefs": [
+                { "searchable": false, "targets": 6 }
+            ]
+        });
+
+        /* realods the table after avery five seconds */
+        setInterval(function () {
+            tasktable.ajax.reload();
+        }, 50000);
+
+        /* Delete task form submission */
+        $('#TaskTable tbody').on('click', 'tr td a.deleteTask', function (e) {
+            e.preventDefault()
+            url = $(this).attr('data-url');
+            $('#deleteTaskModal').modal('show');
+            $('#formDeleteTask').attr('action', url);
+        });
+
+
+        /* View task command and ouput modal */
+        $('#TaskTable tbody').on('click', 'tr td a.viewTaskOutput', function (e) {
+            e.preventDefault()
+            var commandtext = $(this).attr('data-outputText');
+            $('#output').html(commandtext);
+            $('#commandText').val($(this).attr('data-command'));
+            //$('#commandOutput').val($(this).attr('data-outputText'));
+            $('#CommandOutputModal').modal('show');
+            $( "#base64image" ).click(function() {
+                $(this).attr("style","width: 1500px");
+            });
+        });
+
+    })
+</script>
+{% endblock %}

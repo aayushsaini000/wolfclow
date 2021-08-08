@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block wrapper %}
+{% block content %}
+<div class="container">
+   <div class="row mt-3">
+      <div class="col-md-6 offset-md-3">
+         <form method="POST">
+            {{ form.csrf_token }}
+            <div class="form-group">
+               <label for="exampleInputEmail1">Username</label>
+               <input type="text" name="{{ form.username.name }}" class="form-control" id="username" placeholder="Enter username" required>
+            </div>
+            <div class="form-group">
+               <label for="exampleInputPassword1">Password</label>
+               <input type="password" name="{{ form.password.name }}" class="form-control" id="password" placeholder="Password" required>
+            </div>
+            <div class="form-check">
+               <input type="checkbox" class="form-check-input" id="remember_me" name="{{ form.remember_me.name }}">
+               <label class="form-check-label" for="exampleCheck1">Remember Me</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+         </form>
+         {% with messages = get_flashed_messages(with_categories=true) %}
+         {% if messages %}
+         {% for category, message in messages %}{{ message }}{% endfor %}
+         {% endif %}
+         {% endwith %}
+         </div>
+      </div>
+</div>
+{% endblock %}
+{% endblock %}

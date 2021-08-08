@@ -1,0 +1,243 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Begin Page Content -->
+<div class="container-fluid">
+   <!-- Page Heading -->
+   <!-- Content Row -->
+   <div class="row">
+      <!-- Earnings (Monthly) Card Example -->
+      <div class="col-xl-3 col-md-6 mb-4">
+         <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card-body">
+               <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                     <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                        Hosts
+                     </div>
+                     <div class="h5 mb-0 font-weight-bold text-gray-800" id="hostCount"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Earnings (Monthly) Card Example -->
+      <div class="col-xl-3 col-md-6 mb-4">
+         <div class="card border-left-success shadow h-100 py-2">
+            <div class="card-body">
+               <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                     <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                        Online
+                     </div>
+                     <div class="h5 mb-0 font-weight-bold text-gray-800" id="onlineCount"></div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Earnings (Monthly) Card Example -->
+      <div class="col-xl-6 col-md-6 mb-4">
+         <div class="card border-left-info shadow h-100 py-2">
+            <div class="card-body">
+               <div class="row no-gutters align-items-center">
+                  <div class="col mr-2">
+                     <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
+                     </div>
+                     <div class="row no-gutters align-items-center">
+                        <div class="col-auto">
+                           <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800" id="taskCount"></div>
+                        </div>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <!-- Pending Requests Card Example -->
+   </div>
+   <!-- Page Heading -->
+   <!-- DataTales Example -->
+   <div class="card shadow mb-4">
+      <div class="card-body">
+         <div class="table-responsive">
+            <table class="table table-bordered" id="hostTable" width="100%" cellspacing="0">
+               <thead>
+                  <tr>
+                     <th>id</th>
+                     <th>IP</th>
+                     <th>Computername</th>
+                     <th>Country</th>
+                     <th>Last</th>
+                     <th>Infection Date</th>
+                     <th>Note</th>
+                     <th>Status</th>
+                     <th>Actions</th>
+                  </tr>
+               </thead>
+               <tbody>
+               </tbody>
+            </table>
+         </div>
+      </div>
+   </div>
+</div>
+<!-- /.container-fluid -->
+<!-- command modal-->
+<form id="commandForm" method="POST" action="">
+   {{ form.csrf_token }}
+   <div class="modal fade" id="commandModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title">Execute Command</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body">
+<form>
+<div class="form-group">
+<label for="message-text" class="col-form-label">Command:</label>
+<textarea class="form-control" id="command" name="command" maxlength="100" required></textarea>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+<button type="submit" class="btn btn-primary">Execute</button>
+</div>
+</div>
+</div>
+</div>
+</form>
+<!-- Delete modal -->
+<form id="formDeleteHost" method="POST" action="">
+   {{ form.csrf_token  }}
+   <div class="modal fade" id="deleteHostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title">Are you sure?</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body">
+               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+               <button type="submit" class="btn btn-primary">Delete</button>
+            </div>
+            <div class="modal-footer">
+            </div>
+         </div>
+      </div>
+   </div>
+</form>
+<!-- note modal-->
+<form id="formCreateEditNotes" method="POST" action="">
+   {{ form.csrf_token  }}
+   <div class="modal fade" id="notesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+         <div class="modal-content">
+            <div class="modal-header">
+               <h5 class="modal-title">Create or edit a note</h5>
+               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+               <span aria-hidden="true">&times;</span>
+               </button>
+            </div>
+            <div class="modal-body">
+<form>
+<div class="form-group">
+<label for="message-text" class="col-form-label">note:</label>
+<textarea class="form-control" id="note" name="notes" maxlength="255"></textarea>
+</div>
+</form>
+</div>
+<div class="modal-footer">
+<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+<button type="submit" class="btn btn-primary">Submit</button>
+</div>
+</div>
+</div>
+</div>
+</form>
+{% endblock %}
+{% block page_js %}
+<script type="text/JavaScript" src="{{url_for('static', filename='js/flask_ajax_setup.js')}}"></script>
+<script type="text/javascript">
+   $(document).ready(function() {
+      /* Ajax to load datatable source*/
+       var hosttable = $('#hostTable').DataTable( {
+           "ajax": {
+             type: 'GET',
+             url: "{{ url_for('main.ajax_host_list') }}",
+             "dataSrc": function ( json ) {
+               $('#hostCount').text(json.host_count)
+               $('#onlineCount').text(json.online_count)
+               $('#taskCount').text(json.task_count)
+               return json.data
+             }
+           },
+           "columnDefs": [
+               { "searchable": false, "targets": 8 }
+           ]
+       });
+
+       /* realods the table after avery 50 seconds */
+       setInterval( function () {
+         hosttable.ajax.reload();
+       }, 50000 );
+
+       /* Create/Edit notes form susmission */
+       $('#hostTable tbody').on( 'click', 'tr td a.createEditNotes', function (e){
+           var val = $(this).closest('tr').find('td:eq(5)').text();
+           e.preventDefault()
+           $('#note').val(val);
+           url = $(this).attr('data-url');
+           $('#notesModal').modal('show');
+           $('#formCreateEditNotes').attr('action', url);
+       });
+       
+       /*Restrict user to start from space in notes input field*/
+       $("#note").on("keypress", function(e) {
+         if (e.which === 32 && !this.value.length)
+             e.preventDefault();
+         var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+           event.preventDefault();
+           return false;
+         }
+       });
+       
+       /* Delete host form susmission */
+       $('#hostTable tbody').on( 'click', 'tr td a.deleteHost', function (e){
+           e.preventDefault()
+           url = $(this).attr('data-url');
+           $('#deleteHostModal').modal('show');
+           $('#formDeleteHost').attr('action', url);
+       });
+       
+       /* Execute command form susmission */
+       $('#hostTable tbody').on( 'click', 'tr td a.executeCommand', function (e){
+           e.preventDefault()
+           url = $(this).attr('data-url');
+           $('#commandModal').modal('show');
+           $('#commandForm').attr('action', url);
+       });
+       
+       /*Restrict user to start from space in command input field*/
+       $("#command").on("keypress", function(e) {
+         if (e.which === 32 && !this.value.length)
+             e.preventDefault();
+         var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+         var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+         if (!regex.test(key)) {
+           event.preventDefault();
+           return false;
+         }
+       });
+   
+   
+   })
+</script>
+{% endblock %}

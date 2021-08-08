@@ -1,0 +1,9 @@
+C:\Users\memro\source\repos\thorny\thorny\bin\Release\thorny.exe.config
+C:\Users\memro\source\repos\thorny\thorny\bin\Release\thorny.exe
+C:\Users\memro\source\repos\thorny\thorny\bin\Release\thorny.pdb
+C:\Users\memro\source\repos\thorny\thorny\obj\Release\thorny.csproj.CoreCompileInputs.cache
+C:\Users\memro\source\repos\thorny\thorny\obj\Release\thorny.exe
+C:\Users\memro\source\repos\thorny\thorny\obj\Release\thorny.pdb
+C:\Users\memro\source\repos\thorny\thorny\obj\Release\thorny.csprojAssemblyReference.cache
+C:\Users\memro\source\repos\thorny\thorny\bin\Release\System.Drawing.Common.dll
+C:\Users\memro\source\repos\thorny\thorny\obj\Release\thorny.csproj.CopyComplete

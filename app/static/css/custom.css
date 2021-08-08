@@ -1,0 +1,40 @@
+.tableActionIcons svg{
+    color: rgba(233,236,239,.5);
+}
+
+.tableActionIcons:hover {
+    color: #3266bb !important;
+    text-decoration: none;
+}
+
+#loginPageLogo {
+    width: 90px;
+    height: 90px;
+}
+
+.badge-success {
+    color: #fff;
+    background-color: #1cc88a;
+}
+
+.badge-info {
+    color: #fff;
+    background-color: #36b9cc;
+}
+
+.badge-warning {
+    color: #fff;
+    background-color: #f6c23e;
+}
+
+.badge-danger {
+    color: #fff;
+    background-color: #e74a3b;
+}
+
+.avatar {
+    margin-top: -15px !important;
+    margin-bottom: -15px !important;
+    width: 25px !important;
+    height: 25px !important;
+}

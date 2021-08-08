@@ -1,0 +1,391 @@
+{% extends "base.html" %}
+{% block internal_css %}
+<style>
+    .files input {
+    outline: 2px dashed #92b0b3;
+    outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    padding: 100px 0px 75px 35%;
+    text-align: center !important;
+    margin: 0;
+    width: 100% !important;
+}
+.files input:focus{     outline: 2px dashed #92b0b3;  outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear; border:1px solid #92b0b3;
+ }
+.files{ position:relative}
+.files:after {  pointer-events: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 45px;
+    right: 0;
+    height: 50px;
+    content: "";
+    background-image: url("{{url_for('static', filename='images/download_file_icon.png')}}");
+    display: block;
+    margin: 0 auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+.color input{ background-color:#f1f1f1;}
+.files:before {
+    position: absolute;
+    bottom: 10px;
+    left: 0;  pointer-events: none;
+    width: 100%;
+    right: 0;
+    height: 57px;
+    content: " or drag it here. ";
+    display: block;
+    margin: 0 auto;
+    color: #2ea591;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: center;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row">
+        <div class="col-12 col-sm-6 col-xxl d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2" id="hostCount"></h3>
+                            <p class="mb-2">Hosts Connected</p>
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <i class="align-middle text-success" data-feather="monitor"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xxl d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2" id="onlineCount"></h3>
+                            <p class="mb-2">Online Hosts</p>
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <i class="align-middle text-danger" data-feather="activity"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-xxl d-flex">
+            <div class="card flex-fill">
+                <div class="card-body py-4">
+                    <div class="d-flex align-items-start">
+                        <div class="flex-grow-1">
+                            <h3 class="mb-2" id="taskCount"></h3>
+                            <p class="mb-2">Tasks</p>
+                        </div>
+                        <div class="d-inline-block ms-3">
+                            <div class="stat">
+                                <i class="align-middle text-info" data-feather="check-square"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid p-0">
+    <!--<h1 class="h3 mb-3">Host Table</h1>-->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <table id="hostTable" class="table table-striped" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>IP</th>
+                                <th>Computername</th>
+                                <th>Country</th>
+                                <th>Last</th>
+                                <th>Connection Date</th>
+                                <th>Note</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- command modal-->
+<form id="commandForm" method="POST" action="">
+    {{ form.csrf_token }}
+    <div class="modal fade" id="commandModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Execute Command</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Command:</label>
+                            <textarea class="form-control" id="command" name="command" maxlength="100"
+                                required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Execute</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Download and execute -->
+<form id="downloadExecuteForm" method="POST" action="" enctype=multipart/form-data>
+    {{ form.csrf_token }}
+    <div class="modal fade" id="downloadExecuteModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Download and execute</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group files">
+                            <input type="file" name="file" class="form-control-file" required="true">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Upload -->
+<form id="fileUploadForm" method="POST" action="" enctype=multipart/form-data>
+    {{ form.csrf_token }}
+    <div class="modal fade" id="fileUploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Upload File</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group files">
+                            <input type="file" name="file" class="form-control-file" required="true">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Execute Assembly-->
+<form id="executeAssemblyForm" method="POST" action="" enctype=multipart/form-data>
+    {{ form.csrf_token }}
+    <div class="modal fade" id="executeAssemblyModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Execute Assembly</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group files">
+                            <input type="file" name="file" class="form-control-file" required="true">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- Delete modal -->
+<form id="formDeleteHost" method="POST" action="">
+    {{ form.csrf_token }}
+    <div class="modal fade" id="deleteHostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </div>
+                <div class="modal-footer">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<!-- note modal-->
+<form id="formCreateEditNotes" method="POST" action="">
+    {{ form.csrf_token }}
+    <div class="modal fade" id="notesModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create or edit a note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">note:</label>
+                            <textarea class="form-control" id="note" name="notes" maxlength="255"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+{% block page_js %}
+<script type="text/JavaScript" src="{{url_for('static', filename='js/flask_ajax_setup.js')}}"></script>
+<script type="text/JavaScript" src="{{url_for('static', filename='js/sweetalert2.all.min.js')}}"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        /* Ajax to load datatable source*/
+        var hosttable = $('#hostTable').DataTable({
+            "ajax": {
+                type: 'GET',
+                url: "{{ url_for('main.ajax_host_list') }}",
+                "dataSrc": function (json) {
+                    $('#hostCount').text(json.host_count)
+                    $('#onlineCount').text(json.online_count)
+                    $('#taskCount').text(json.task_count)
+                    return json.data
+                }
+            },
+            "columnDefs": [
+                { "searchable": false, "targets": 8 }
+            ]
+        });
+
+        /* realods the table after avery 50 seconds */
+        setInterval( function () {
+            hosttable.ajax.reload();
+        }, 20000 );
+
+        /* Create/Edit notes form susmission */
+        $('#hostTable tbody').on('click', 'tr td a.createEditNotes', function (e) {
+            var val = $(this).closest('tr').find('td:eq(6)').text();
+            e.preventDefault()
+            $('#note').val(val);
+            url = $(this).attr('data-url');
+            $('#notesModal').modal('show');
+            $('#formCreateEditNotes').attr('action', url);
+        });
+
+        /*Restrict user to start from space in notes input field*/
+        $("#note").on("keypress", function (e) {
+            if (e.which === 32 && !this.value.length)
+                e.preventDefault();
+            var regex = new RegExp("^[a-zA-Z0-9\\s]+$");
+            var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+            if (!regex.test(key)) {
+                event.preventDefault();
+                return false;
+            }
+        });
+
+        /* Delete host form susmission */
+        $('#hostTable tbody').on('click', 'tr td a.deleteHost', function (e) {
+            e.preventDefault()
+            url = $(this).attr('data-url');
+            $('#deleteHostModal').modal('show');
+            $('#formDeleteHost').attr('action', url);
+        });
+
+        /* Execute command form susmission */
+        $('#hostTable tbody').on('click', 'tr td a.executeCommand', function (e) {
+            e.preventDefault()
+            url = $(this).attr('data-url');
+            //$('#commandModal').modal('show');
+            $('#dropdown').dropdown('toggle');
+            $('#commandForm').attr('action', url);
+        });
+
+        /* Execute command form susmission */
+        $('#hostTable tbody').on('click', '#screenshot', function() {
+            Swal.fire({icon: 'success',text: 'Sent screenshot command'});
+        });
+
+        /* Download Execute command form susmission */
+        $('#hostTable tbody').on('click', 'tr td a.optionDownloadExecute', function (e) {
+            e.preventDefault()
+            url = $(this).attr('data-url');
+            //$('#commandModal').modal('show');
+            $('#dropdown').dropdown('toggle');
+            $('#downloadExecuteForm').attr('action', url);
+        });
+
+        /* Execute Assembly form susmission */
+        $('#hostTable tbody').on('click', 'tr td a.optionExecuteAssembly', function (e) {
+            e.preventDefault()
+            url = $(this).attr('data-url');
+            //$('#commandModal').modal('show');
+            $('#dropdown').dropdown('toggle');
+            $('#executeAssemblyForm').attr('action', url);
+        });
+
+        /* File Upload form susmission */
+        $('#hostTable tbody').on('click', 'tr td a.optionFileUpload', function (e) {
+            e.preventDefault()
+            url = $(this).attr('data-url');
+            //$('#commandModal').modal('show');
+            $('#dropdown').dropdown('toggle');
+            $('#fileUploadForm').attr('action', url);
+        });
+    })
+</script>
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block wrapper %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row mt-3">
+        <div class="col-md-6 offset-md-2">
+            <h3>Page not found.</h3>
+            <a href="{{ url_for('main.index') }}" type="button" class="btn btn-primary">Back</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+{% endblock %}
